@@ -18,10 +18,15 @@ namespace CentralizedAuth.Authentication
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddMvc();
+
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
+                .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApiResources())
-                .AddInMemoryClients(Config.GetClients());
+                .AddInMemoryClients(Config.GetClients())
+                .AddTestUsers(Config.GetUsers());
 
             //services.AddAuthentication()
             //    .AddGoogle("Google", "Google Sign-in", options =>
@@ -72,7 +77,11 @@ namespace CentralizedAuth.Authentication
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseIdentityServer();
+
+            app.UseMvcWithDefaultRoute();
         }
     }
 }

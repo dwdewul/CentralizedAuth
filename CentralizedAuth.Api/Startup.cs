@@ -79,9 +79,13 @@ namespace CentralizedAuth.Api
                         ctx.Response.StatusCode = 403;
                         ctx.Response.WriteAsync("Bad Request, m8").Wait();
                     }
+                    else
+                    {
 
-                    Console.WriteLine("\n" + permissions.ToString() + "\n");
-                    ctx.Request.Headers.Add(permissions.Key ?? "", permissions.Value?.First( ) ?? "");
+                        Console.WriteLine("\n" + permissions.ToString() + "\n");
+                        ctx.Response.Clear();
+                        ctx.Response.Headers.Add(permissions.Key ?? "", permissions.Value?.First() ?? "");
+                    }
                 }
 
                 return next();

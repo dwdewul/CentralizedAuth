@@ -12,7 +12,28 @@ namespace CentralizedAuth.ConsoleClient
 
         private static async Task MainAsync()
         {
-            var discovery = await DiscoveryClient.GetAsync("https://localhost:5001/");
+            var discoRO = await new HttpClient().GetDiscoveryDocumentAsync("https://localhost:5001");
+            if(discoRO.IsError)
+            {
+                Console.WriteLine(discoRO.Error);
+                return;
+            }
+
+            var tokenClientRO = new TokenClient(discoRO.TokenEndpoint, "ro.client", "Secret");
+            var tokenResponseRO = await tokenClientRO.RequestResourceOwnerPasswordAsync("ddewulf", "password", "PermissionsApi");
+
+            if(tokenResponseRO.IsError)
+            {
+                Console.WriteLine(tokenResponseRO.Error);
+                return;
+            }
+
+            Console.WriteLine(tokenResponseRO.Json);
+            Console.WriteLine("\n\n");
+
+
+            // Using Client Credentials
+            var discovery = await new HttpClient().GetDiscoveryDocumentAsync("https://localhost:5001/");
             if (discovery.IsError)
             {
                 Console.WriteLine(discovery.Error);
